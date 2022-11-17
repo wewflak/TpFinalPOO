@@ -33,37 +33,28 @@ try {
 	public Cliente buscarCliente(Long doc) {
 		// TODO Auto-generated method stub
 		try {
-			Query query = manager.createQuery("SELECT c FROM Cliente c" + "WHERE c.dni = :doc");
-			return (Cliente) query.getSingleResult();
+			//Query query = manager.createQuery("SELECT c FROM Cliente c" + "WHERE c.dni = :doc");
+			//return (Cliente) query.getSingleResult();
+			return manager.find(Cliente.class, doc);
 		}catch(Exception e) {
 			System.out.println(e);
+			System.out.println("ERROR*******************************");
 			if(e instanceof NullPointerException) {
 				System.out.println("El dni no fue registrado anteriormente");
 			}
 		}
 		return null;
 	}
-   // @Override
-//    public Particular obtenerClienteParticular(int dni) {
-//        try {
-//            Query query = manager.createQuery("SELECT c FROM Cliente c " + " WHERE c.dni = :dni ");
-//            query.setParameter("dni", dni);
-//            return (Particular) query.getSingleResult();
+	@Override
+    @SuppressWarnings("unchecked")
+    public List<Cliente> obtenerClientes() {
+       // try {
+		List<Cliente> clientes = (List<Cliente>) manager.createQuery("SELECT c FROM clientes c").getResultList();
+		return clientes;
 //        } catch (Exception e) {
 //            System.out.println(e);
 //        }
 //        return null;
-//    }
-	@Override
-    @SuppressWarnings("unchecked")
-    public List<Cliente> obtenerClientes() {
-        try {
-            Query query = manager.createQuery("SELECT e FROM Cliente e");
-            return (List<Cliente>) query.getResultList();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return null;
     }
 
 }

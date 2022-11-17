@@ -12,7 +12,15 @@ public class Principal {
 
 	public static void main(String[] args) {
 		//ClienteUtil.cargarCliente();
-		ClienteUtil.mostrarClientes();
+		ClienteDaoIMP ClienteService = new ClienteDaoIMP();
+		Rol rol = new Rol("dddd");
+		Usuario usuario = new Usuario("aasss", "123", rol);
+		Cliente cliente = new Cliente("ddd","aaaa", (long)5151, LocalDate.now(), usuario);
+		//ClienteService.agregarCliente(cliente, usuario, rol);
+		Cliente clientBuscado= new Cliente();
+		System.out.println(ClienteService.buscarCliente((long)5151).getApellido());
+		ClienteService.obtenerClientes().stream().forEach(c-> System.out.println(c.getApellido()));
+		
 		
 	}
 

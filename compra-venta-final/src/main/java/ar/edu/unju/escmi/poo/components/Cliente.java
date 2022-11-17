@@ -1,5 +1,6 @@
 package ar.edu.unju.escmi.poo.components;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.OneToOne;
@@ -11,9 +12,13 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+@Table(name="Clientes")
 @Entity
-@Table(name = "clientes")
-public class Cliente {
+public class Cliente  implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String nombre;
 	private String apellido;
 	@Id

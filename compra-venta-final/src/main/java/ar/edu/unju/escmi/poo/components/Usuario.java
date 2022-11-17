@@ -3,6 +3,7 @@ package ar.edu.unju.escmi.poo.components;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 @Entity
 public class Usuario {
@@ -10,6 +11,7 @@ public class Usuario {
 	private String email;
 	private String contrasena;
 	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="rol_id")
 	private Rol rol;
 	public Usuario() {
 		// TODO Auto-generated constructor stub
