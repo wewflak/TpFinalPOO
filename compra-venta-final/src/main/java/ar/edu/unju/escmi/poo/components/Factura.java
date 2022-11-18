@@ -1,5 +1,6 @@
 package ar.edu.unju.escmi.poo.components;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 @Entity
-public class Factura {
+public class Factura implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="idCliente")
 	private Cliente clienteFactura;

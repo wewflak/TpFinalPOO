@@ -1,12 +1,19 @@
 package ar.edu.unju.escmi.poo.components;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 @Entity
-public class Usuario {
+public class Usuario implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	private String email;
 	private String contrasena;

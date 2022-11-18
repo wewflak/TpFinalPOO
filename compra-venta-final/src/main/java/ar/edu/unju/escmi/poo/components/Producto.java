@@ -1,10 +1,16 @@
 package ar.edu.unju.escmi.poo.components;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 @Entity
-public class Producto {
+public class Producto implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String nombre;
 	private String descripcion;
 	@Id

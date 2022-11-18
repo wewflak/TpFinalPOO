@@ -49,7 +49,7 @@ try {
     @SuppressWarnings("unchecked")
     public List<Cliente> obtenerClientes() {
        // try {
-		List<Cliente> clientes = (List<Cliente>) manager.createQuery("SELECT c FROM clientes c").getResultList();
+		List<Cliente> clientes = (List<Cliente>) manager.createQuery("SELECT c FROM Cliente c").getResultList();
 		return clientes;
 //        } catch (Exception e) {
 //            System.out.println(e);
