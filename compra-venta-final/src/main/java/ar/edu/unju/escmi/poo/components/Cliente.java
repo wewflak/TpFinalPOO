@@ -8,8 +8,11 @@ import javax.persistence.Table;
 
 import jakarta.persistence.InheritanceType;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 @Table(name="Clientes")
@@ -19,9 +22,12 @@ public class Cliente  implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY )
+	private Integer idCliente;
 	private String nombre;
 	private String apellido;
-	@Id
+	@Column(unique=true, nullable=false)
 	private Long dni;
 	private LocalDate fechaDeN;
 	@OneToOne(fetch =FetchType.LAZY)

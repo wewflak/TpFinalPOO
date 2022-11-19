@@ -39,7 +39,9 @@ public class FacturaDaoIMP implements IFacturaDao{
 	@Override
 	public Factura buscarFacturaPorId(Long idTicket) {
 		// TODO Auto-generated method stub
-		return manager.find(Factura.class, idTicket);
+		Query query = manager.createQuery("SELECT f FROM Factura f " + " WHERE f.codFactura = :idTicket");
+		query.setParameter("idTicket", idTicket);
+		return (Factura) query.getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.poo.dao.imp;
 
 import ar.edu.unju.escmi.poo.components.Cliente;
+import ar.edu.unju.escmi.poo.components.Factura;
 import ar.edu.unju.escmi.poo.components.Rol;
 import ar.edu.unju.escmi.poo.components.Usuario;
 import ar.edu.unju.escmi.poo.config.EmfSingleton;
@@ -34,7 +35,9 @@ try {
 		try {
 			//Query query = manager.createQuery("SELECT c FROM Cliente c" + "WHERE c.dni = :doc");
 			//return (Cliente) query.getSingleResult();
-			return manager.find(Cliente.class, doc);
+			Query query = manager.createQuery("SELECT c FROM Cliente c " + " WHERE c.dni = :dni");
+			query.setParameter("dni", doc);
+			return (Cliente) query.getSingleResult();
 		}catch(Exception e) {
 			System.out.println(e);
 			System.out.println("ERROR*******************************");

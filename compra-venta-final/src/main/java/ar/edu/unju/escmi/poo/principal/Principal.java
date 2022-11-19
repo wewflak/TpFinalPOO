@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+
+import org.hibernate.exception.ConstraintViolationException;
+
 import ar.edu.unju.escmi.poo.components.Cliente;
 import ar.edu.unju.escmi.poo.components.Detalle;
 import ar.edu.unju.escmi.poo.components.Factura;
@@ -29,8 +37,8 @@ public class Principal {
 	public static void main(String[] args) {
 		ProductoUtil productoUtil = new ProductoUtil();
 		StockUtil stockUtil = new StockUtil();
-		//productoUtil.inicializarProductos();
-		//stockUtil.inicializarStock();
+		productoUtil.inicializarProductos();
+		stockUtil.inicializarStock();
 		//ClienteUtil.cargarCliente();
 		ProductoDaoIMP productoService = new ProductoDaoIMP();
 		ClienteDaoIMP ClienteService = new ClienteDaoIMP();
@@ -41,11 +49,11 @@ public class Principal {
 		RolDaoIMP rolService = new RolDaoIMP();
 		Rol rol = new Rol("vendedor");
 		Rol rol2 = new Rol("cliente");
-		//rolService.agregarRol(rol);
-		//rolService.agregarRol(rol2);
+		rolService.agregarRol(rol);
+		rolService.agregarRol(rol2);
 		Usuario usuario = new Usuario("aasss", "123", rolService.buscarRol(1));
 		Cliente cliente = new Cliente("ddd","aaaa", (long)5151, LocalDate.now(), usuario);
-		//ClienteService.agregarCliente(cliente, usuario);
+		ClienteService.agregarCliente(cliente, usuario);
 		Cliente clientBuscado= new Cliente();
 		//System.out.println(ClienteService.buscarCliente((long)5151).getApellido());
 		//ClienteService.obtenerClientes().stream().forEach(c-> System.out.println(c.getApellido()));
@@ -76,6 +84,7 @@ public class Principal {
 				switch(opPrimigenio) {
 				case 1:
 					band=false;
+					try {
 					while(!band) {
 						System.out.println("\n*/*/*/**/*/   Menu   /*/*/*/*/*");
 						System.out.println("Ingrese su email");
@@ -165,6 +174,7 @@ public class Principal {
 									boolean band1=false,band2=false,band3=false, bandFinal=false;
 									Integer answer=0;
 									System.out.println("Ingrese el dni del cliente");
+									while(!bandFinal) {
 									try {
 										dni =scan.nextLong();
 										Cliente clienteFactura = ClienteService.buscarCliente(dni);
@@ -224,23 +234,33 @@ public class Principal {
 																	}else {
 																	System.out.println("\n El stock de producto no satisface la cantidad solicitada\n");
 																	answer=2;
-																	bandFinal=true;
 																}
 															}catch(Exception e) {
 																if(e instanceof InputMismatchException) {
 																	System.out.println("\nIngrese el tipo correcto de dato");
 																}
+																System.out.println(e);
 															}
 														}
 														}else {
 															System.out.println("\nEl producto ya no tiene stock\n");
 															answer=2;
-															bandFinal=true;
 														}
 													}catch(Exception e) {
 														if(e instanceof InputMismatchException) {
 															System.out.println("\nIngrese el tipo correcto de dato");
+														}else if(e instanceof NonUniqueResultException) {
+															System.out.println("\n Ya existe una factura con ese codigo2\n");}
+														else if(e instanceof NullPointerException) {
+															System.out.println("No existe producto con ese codigo\n");
+														}else if(e instanceof RollbackException) {
+															System.out.println("Ya existe factura con ese codigo5\n");
+														}else if(e instanceof PersistenceException) {
+															System.out.println("aaaaaaaaa");
+														}else if(e instanceof ConstraintViolationException) {
+															System.out.println("bbbbbbbbbbbbbbbbbbb");
 														}
+														System.out.println(e);
 													}
 												}
 												}while(answer!=2);
@@ -248,16 +268,31 @@ public class Principal {
 											}catch(Exception e) {
 												if(e instanceof InputMismatchException) {
 													System.out.println("\nIngrese el tipo correcto de dato");
+												}else if(e instanceof NonUniqueResultException) {
+													System.out.println("\n Ya existe una factura con ese codigo3\n");
+												}else if(e instanceof RollbackException) {
+													System.out.println("Ya existe factura con ese codigo4\n");
+												}else if(e instanceof PersistenceException) {
+													System.out.println("aaaaaaaaa");
+												}else if(e instanceof ConstraintViolationException) {
+													System.out.println("bbbbbbbbbbbbbbbbbbb");
 												}
+												System.out.println(e +"aaaaaaaaaaaaaaaaa");
 											}
 										}
 										}
 									}catch(Exception e) {
 										if(e instanceof InputMismatchException) {
 											System.out.println("\nIngrese el tipo correcto de dato");
+										}else if(e instanceof NullPointerException) {
+											System.out.println("No existe un cliente con esde dni\n");
+										}else if(e instanceof RollbackException) {
+											System.out.println("Ya existe factura con ese codigo8\n");
+											bandFinal=true;
 										}
+										System.out.println(e);
 									}
-									
+									}
 									break;
 								case 3:
 									ClienteService.obtenerClientes().stream().forEach(c-> System.out.println(c.toString()));
@@ -322,6 +357,8 @@ public class Principal {
 												System.out.println(e);
 												if(e instanceof NullPointerException) {
 													System.out.println("\nLa factura no existe");
+												}else if(e instanceof NoResultException) {
+													System.out.println("\n El cliente no tiene registrada una factura con ese codigo");
 												}
 											}
 											break;
@@ -348,10 +385,23 @@ public class Principal {
 					}catch(Exception e) {
 						if(e instanceof NullPointerException) {
 							System.out.println("No existe el cliente");
+						}else if(e instanceof NoResultException) {
+							System.out.println("\nNo existe el usuario\n");
 						}
+						System.out.println(e);
 					}
 				
 				}
+				}catch(Exception e) {
+					if(e instanceof NoResultException) {
+						System.out.println("aaaaa");
+					}else if(e instanceof NullPointerException) {
+						System.out.println("No existe el cliente");
+					}else {
+						System.out.println(e);
+					}
+				}
+					break;
 				case 2:
 					System.out.println("Programa Finalizado...");
 					break;
@@ -359,6 +409,7 @@ public class Principal {
 					System.out.println("Ingrese una de las opciones presentadas");
 					break;
 				}
+				
 				
 				
 			}while(opPrimigenio!=2);

@@ -17,7 +17,7 @@ public class Detalle implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idDetalle;
 	@OneToOne(fetch =FetchType.LAZY)
 	@JoinColumn(name="idProducto")
