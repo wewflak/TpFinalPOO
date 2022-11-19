@@ -8,9 +8,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 @Entity
 public class Detalle implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idDetalle;
@@ -20,6 +25,9 @@ public class Detalle implements Serializable{
 	private Integer descuentoDetalle;
 	private Integer cantidadDetalle;
 	private Double importeDetalle;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="idFactura")
+	private Factura facturaDetalle;
 	public Detalle() {
 		// TODO Auto-generated constructor stub
 	}
@@ -47,13 +55,23 @@ public class Detalle implements Serializable{
 	public void setImporteDetalle(Double importeDetalle) {
 		this.importeDetalle = importeDetalle;
 	}
-	public Detalle(Producto productoDetalle, Integer descuentoDetalle, Integer cantidadDetalle, Double importeDetalle) {
+	
+	public Factura getFacturaDetalle() {
+		return facturaDetalle;
+	}
+	public void setFacturaDetalle(Factura facturaDetalle) {
+		this.facturaDetalle = facturaDetalle;
+	}
+	public Detalle(Producto productoDetalle, Integer descuentoDetalle, Integer cantidadDetalle,
+			Double importeDetalle, Factura facturaDetalle) {
 		super();
 		this.productoDetalle = productoDetalle;
 		this.descuentoDetalle = descuentoDetalle;
 		this.cantidadDetalle = cantidadDetalle;
 		this.importeDetalle = importeDetalle;
+		this.facturaDetalle = facturaDetalle;
 	}
+	
 	
 	
 }

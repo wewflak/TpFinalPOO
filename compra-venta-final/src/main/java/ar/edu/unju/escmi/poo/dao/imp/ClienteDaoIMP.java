@@ -16,13 +16,12 @@ public class ClienteDaoIMP implements IClienteDao {
 	
 	private static EntityManager manager =  EmfSingleton.getInstance().getEmf().createEntityManager();
 	@Override
-	public void agregarCliente(Cliente client, Usuario user, Rol role) {
+	public void agregarCliente(Cliente client, Usuario user) {
 		// TODO Auto-generated method stub
 try {
 		manager.getTransaction().begin();
 		manager.persist(client);
 		manager.persist(user);
-		manager.persist(role);
 		manager.getTransaction().commit();
 }catch(Exception e) {
 	System.out.println(e.toString()+" "+ e.getMessage() + " " + e.getCause());

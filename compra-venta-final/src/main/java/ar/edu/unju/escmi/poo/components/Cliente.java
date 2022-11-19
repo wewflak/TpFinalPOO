@@ -67,5 +67,11 @@ public class Cliente  implements Serializable{
 		this.fechaDeN = fechaDeN;
 		this.usuario = usuario;
 	}
+	@Override
+	public String toString() {
+		return "Cliente y Usuario [nombre=" + nombre + ", apellido=" + apellido + ", dni=" + dni + ", fechaDeN=" + fechaDeN
+				+ ", email=" + usuario.getEmail() + ", contrasena= " + usuario.getContrasena() +", rol" + usuario.getRol().getDescripcion()+"]";
+	}
+	
 	
 }

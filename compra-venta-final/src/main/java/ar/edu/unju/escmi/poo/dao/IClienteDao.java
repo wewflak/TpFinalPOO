@@ -9,7 +9,7 @@ import ar.edu.unju.escmi.poo.components.Usuario;
 
 public interface IClienteDao {
 
-	public void agregarCliente(Cliente client, Usuario user, Rol role);
+	public void agregarCliente(Cliente client, Usuario user);
 	public Cliente buscarCliente(Long doc);
     public List<Cliente> obtenerClientes();
 }

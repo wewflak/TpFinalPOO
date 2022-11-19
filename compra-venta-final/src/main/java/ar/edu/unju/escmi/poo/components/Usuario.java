@@ -2,6 +2,7 @@ package ar.edu.unju.escmi.poo.components;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -16,6 +17,7 @@ public class Usuario implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
 	private String email;
+	@Column(unique=true)
 	private String contrasena;
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="rol_id")

@@ -43,12 +43,16 @@ public class Stock implements Serializable {
 	public Integer getCantidad() {
 		return cantidad;
 	}
-	public Stock(Long codStock, Integer cantidad, Producto producto) {
+	public Stock(Integer cantidad, Producto producto) {
 		super();
-		this.codStock = codStock;
 		this.cantidad = cantidad;
 		this.producto = producto;
 	}
+	@Override
+	public String toString() {
+		return "Stock [codStock=" + codStock + ", cantidad=" + cantidad + ", \nproducto=\n" + producto.toString() + "]";
+	}
+	
 
 	
 	
