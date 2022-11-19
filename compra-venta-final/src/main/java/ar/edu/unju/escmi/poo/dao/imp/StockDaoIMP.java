@@ -50,6 +50,9 @@ public class StockDaoIMP implements IStockDao{
 	public void decrementarStockProducto(Stock stock, Integer quantity) {
 		// TODO Auto-generated method stub
 		stock.setCantidad(stock.getCantidad()-quantity);
+		manager.getTransaction().begin();
+		manager.refresh(stock);
+		manager.getTransaction().commit();
 		
 	}
 	

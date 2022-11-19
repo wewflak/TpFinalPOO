@@ -56,4 +56,12 @@ try {
 //        return null;
     }
 
+	@Override
+	public Cliente buscarClientePorUsuario(String email) {
+		// TODO Auto-generated method stub
+		Query query = manager.createQuery("Select c FROM Cliente c " + " WHERE c.usuario.email = :email");
+		query.setParameter("email", email);
+		return (Cliente) query.getSingleResult();
+	}
+
 }

@@ -76,5 +76,10 @@ public class Factura implements Serializable {
 		this.Total = total;
 		this.detalles = detalles;
 	}
+	@Override
+	public String toString() {
+		return "Factura [clienteFactura=" + clienteFactura + ", fechaFactura=" + fechaFactura + ", codFactura="
+				+ codFactura + ", subtotal=" + subtotal + ", Total=" + Total + ", detalles=" + detalles + "]";
+	}
 	
 }

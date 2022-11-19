@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.poo.principal;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -57,7 +58,7 @@ public class Principal {
 		Long doc=null;
 		String correo, contrasena="";
 		Scanner scan = new Scanner( System.in);
-		//stockService.mostrarStocks().stream().forEach(s-> System.out.println(s.toString()));
+		stockService.mostrarStocks().stream().forEach(s-> System.out.println(s.toString()));
 		System.out.println(stockService.buscarStockPorProducto((long)779696259).getCantidad());
 			do {
 				System.out.println("\n1. Iniciar Sesión");
@@ -85,6 +86,8 @@ public class Principal {
 						try {
 						band=true;
 						user = usuarioService.buscarUsuario(correo, contrasena);
+						client = ClienteService.buscarClientePorUsuario(user.getEmail());
+						System.out.println(client.getDni());
 						System.out.println(user.getEmail());
 						if(user.getRol().getDescripcion().equals("vendedor")) {
 							do {
@@ -105,7 +108,8 @@ public class Principal {
 									try {
 									String nm, ap, em, ps, fdn;
 									Long dn;
-									LocalDate date1;
+									LocalDate date1=null;
+									DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 										System.out.println("Ingrese el nombre del cliente");
 										nm = scan.next();
 										System.out.println("Ingrese el apellido del cliente");
@@ -158,8 +162,8 @@ public class Principal {
 								case 2:
 									Long nFac, dni, cPro;
 									Integer cant;
-									boolean band1=false,band2=false,band3=false;
-									String answer="s";
+									boolean band1=false,band2=false,band3=false, bandFinal=false;
+									Integer answer=0;
 									System.out.println("Ingrese el dni del cliente");
 									try {
 										dni =scan.nextLong();
@@ -168,6 +172,7 @@ public class Principal {
 											while(!band1) {
 											System.out.println("Ingrese el numero de factura");
 											try {
+												while(!bandFinal) {
 												nFac = scan.nextLong();
 												Factura FacturaNueva = new Factura();
 												band1=true;
@@ -180,8 +185,8 @@ public class Principal {
 												FacturaNueva.setTotal(tot);
 												FacturaNueva.setSubtotal(subTot);
 												facturaService.agregarFactura(FacturaNueva);
-												while(answer.equals("s")) {
-													while(!band2) {
+												do{
+													while(band2 == false) {
 													System.out.println("Ingrese el codigo de producto");
 													try {
 														Producto productoDetalle = new Producto();
@@ -201,9 +206,25 @@ public class Principal {
 																	importe = productoDetalle.getPrecioUnitario()*cant;
 																	Detalle detalleNuevo = new Detalle(productoDetalle, productoDetalle.getDescuento(), cant, importe, FacturaNueva);
 																	detalleService.crearDetalle(detalleNuevo);
+																	facturaService.agregarDetalle(detalleNuevo, FacturaNueva);
+																	System.out.println("Quiere agregar otro detalle? no=2");
+																	answer =  scan.nextInt();
+																	if(answer==2) {
+																		bandFinal=true;
+																		System.out.println(answer);
+																		facturaService.calcularSubtotal(FacturaNueva);
+																	facturaService.calcularTotal(FacturaNueva);
+
+																	facturaService.mostrarFactura(FacturaNueva);
+																	}else {
+																		System.out.println(answer);
+																		return;
+																	}
+																	
 																	}else {
 																	System.out.println("\n El stock de producto no satisface la cantidad solicitada\n");
-																	answer="n";
+																	answer=2;
+																	bandFinal=true;
 																}
 															}catch(Exception e) {
 																if(e instanceof InputMismatchException) {
@@ -213,7 +234,8 @@ public class Principal {
 														}
 														}else {
 															System.out.println("\nEl producto ya no tiene stock\n");
-															answer="n";
+															answer=2;
+															bandFinal=true;
 														}
 													}catch(Exception e) {
 														if(e instanceof InputMismatchException) {
@@ -221,6 +243,7 @@ public class Principal {
 														}
 													}
 												}
+												}while(answer!=2);
 												}
 											}catch(Exception e) {
 												if(e instanceof InputMismatchException) {
@@ -240,8 +263,28 @@ public class Principal {
 									ClienteService.obtenerClientes().stream().forEach(c-> System.out.println(c.toString()));
 									break;
 								case 4:
+									dni=(long)0;
+									System.out.println("Ingrese el numero de dni del cliente");
+									try {
+										dni = scan.nextLong();
+										ClienteService.buscarCliente(dni);
+										facturaService.retornarFacturaPorCliente(dni).stream().forEach(f-> facturaService.mostrarFactura(f));
+									}catch(Exception e){
+										System.out.println(e);
+									}
 									break;
 								case 5:
+									Long codeTicket=(long)0;
+									System.out.println("Ingrese el codigo de factura");
+									try {
+										codeTicket = scan.nextLong();
+										facturaService.mostrarFactura(facturaService.buscarFacturaPorId(codeTicket));
+									}catch(Exception e) {
+										System.out.println(e);
+										if(e instanceof NullPointerException) {
+											System.out.println("\nLa factura no existe");
+										}
+									}
 									break;
 								case 6:
 									System.out.println("Sesion cerrada...");
@@ -270,9 +313,20 @@ public class Principal {
 										switch(op1) {
 									
 										case 1:
-											
+											Long codeTicket=(long)0;
+											System.out.println("Ingrese el codigo de factura");
+											try {
+												codeTicket = scan.nextLong();
+												facturaService.mostrarFactura(facturaService.mostrarFacturasPorCliente(client.getDni(), codeTicket));
+											}catch(Exception e) {
+												System.out.println(e);
+												if(e instanceof NullPointerException) {
+													System.out.println("\nLa factura no existe");
+												}
+											}
 											break;
 										case 2:
+											facturaService.retornarFacturaPorCliente(client.getDni()).stream().forEach(f-> facturaService.mostrarFactura(f));
 											break;
 										case 3:
 											break;
