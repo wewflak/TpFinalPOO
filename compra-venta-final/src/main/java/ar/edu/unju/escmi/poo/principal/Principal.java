@@ -1,7 +1,9 @@
 package ar.edu.unju.escmi.poo.principal;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import ar.edu.unju.escmi.poo.components.Cliente;
 import ar.edu.unju.escmi.poo.components.Detalle;
@@ -169,9 +171,15 @@ public class Principal {
 												nFac = scan.nextLong();
 												Factura FacturaNueva = new Factura();
 												band1=true;
+												List<Detalle> detallesFactura = new ArrayList<Detalle>();
+												Double tot = null,subTot = null;
 												FacturaNueva.setClienteFactura(clienteFactura);
 												FacturaNueva.setCodFactura(nFac);
 												FacturaNueva.setFechaFactura(LocalDate.now());
+												FacturaNueva.setDetalles(detallesFactura);
+												FacturaNueva.setTotal(tot);
+												FacturaNueva.setSubtotal(subTot);
+												facturaService.agregarFactura(FacturaNueva);
 												while(answer.equals("s")) {
 													while(!band2) {
 													System.out.println("Ingrese el codigo de producto");

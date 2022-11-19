@@ -73,7 +73,7 @@ public class Factura implements Serializable {
 		this.fechaFactura = fechaFactura;
 		this.codFactura = codFactura;
 		this.subtotal = subtotal;
-		Total = total;
+		this.Total = total;
 		this.detalles = detalles;
 	}
 	
