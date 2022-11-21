@@ -71,7 +71,10 @@ public class Detalle implements Serializable{
 		this.importeDetalle = importeDetalle;
 		this.facturaDetalle = facturaDetalle;
 	}
-	
+	public void calcularImporte() {
+		Double importeTotal = this.productoDetalle.getPrecioUnitario()-(this.productoDetalle.getPrecioUnitario()*this.descuentoDetalle/100);
+		setImporteDetalle (cantidadDetalle * importeTotal);
+	}
 	
 	
 }

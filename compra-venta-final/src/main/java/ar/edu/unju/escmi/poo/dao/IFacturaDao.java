@@ -14,7 +14,7 @@ public interface IFacturaDao {
 	public void mostrarDetalle(Factura ticket);
 	public Factura buscarFacturaPorId(Long idTicket);
 	public List<Factura> retornarFacturaPorCliente(Long dni);
-	public void agregarDetalle(Detalle detail, Factura ticket);
+	public void agregarDetalle(List<Detalle> details, Factura ticket);
 	public void calcularTotal(Factura ticket);
 	public void calcularSubtotal(Factura ticket);
 	public Optional<Factura> comprobarExistenciaNroFactura(Long idTicket);

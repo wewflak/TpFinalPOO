@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,7 +32,7 @@ public class Factura implements Serializable {
 	private Long codFactura;
 	private Double subtotal;
 	private Double Total;
-	@OneToMany(mappedBy = "idDetalle", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy = "idDetalle", fetch=FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Detalle> detalles = new ArrayList<Detalle>();
 	public Factura() {
 		// TODO Auto-generated constructor stub

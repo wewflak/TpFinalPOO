@@ -212,11 +212,9 @@ public class Principal {
 										comprobarCliente = usuarioService.comprobarExistenciaDNI(dni);
 										if(comprobarCliente.isPresent()) {
 										Usuario clienteFactura = usuarioService.buscarUsuarioDni(dni);
-										while(!bandFinal) {
 											while(!band1) {
 											System.out.println("Ingrese el numero de factura");
 											try {
-												while(!bandFinal) {
 												nFac = scan.nextLong();
 												comprobarFactura = facturaService.comprobarExistenciaNroFactura(nFac);
 												if(comprobarFactura.isEmpty()) {
@@ -232,21 +230,33 @@ public class Principal {
 													FacturaNueva.setSubtotal(subTot);
 													facturaService.agregarFactura(FacturaNueva);
 													answer=0;
-													while(answer!=2){
-														while(band2 == false) {
+															do {
 															band=false;
-															while(!band) {
+															do{
+																System.out.println(band2);
 														System.out.println("Ingrese el codigo de producto");
 														try {
-															Producto productoDetalle = new Producto();
 															cPro = scan.nextLong();
-															band2=true;comprobarStock = stockService.comprobarExistenciaProducto(cPro);
+															band2=true;
+															band=true;
+															System.out.println(band2);
+															Producto productoDetalle = new Producto();
+															comprobarStock = stockService.comprobarExistenciaProducto(cPro);
+															if(comprobarStock.isPresent()) {
+															boolean bandDetalle=false;
+															System.out.println("presente");
+															while(!bandDetalle) {
 															comprobarDetalle = facturaService.comprobarExistenciaDetalle(cPro, FacturaNueva);
+															System.out.println("llego");
 															if(comprobarStock.isPresent() && comprobarDetalle.isEmpty()) {
-																band=true;
+																bandDetalle=true;
 															productoDetalle = productoService.buscarProductoPorCodigo(cPro);
-															
+															System.out.println("estoy");
 															if(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()).getCantidad()>0) {
+																band2=true;
+																System.out.println("aaaa" +band3);
+																band2=true;
+																band3=false;
 																while(!band3) {
 																System.out.println("Ingrese la cantidad a comprar del producto");
 																try {
@@ -256,75 +266,89 @@ public class Principal {
 																		stockService.decrementarStockProducto(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()), cant);
 																		System.out.println(stockService.buscarStockPorProducto((long)779696259).getCantidad());
 																		Double importe=(double) 0;
-																		importe = productoDetalle.getPrecioUnitario()*cant;
 																		Detalle detalleNuevo = new Detalle(productoDetalle, productoDetalle.getDescuento(), cant, importe, FacturaNueva);
+																		detalleNuevo.calcularImporte();
 																		detalleService.crearDetalle(detalleNuevo);
-																		facturaService.agregarDetalle(detalleNuevo, FacturaNueva);
-																		band=false;
-																		while(!band) {
-																		System.out.println("Quiere agregar otro detalle? no=2");
+																		detallesFactura.add(detalleNuevo);
+																		int it=0;
+																		do {
+																		System.out.println("Quiere agregar otro detalle? si=1 ... no=2");
 																		try {
 																		answer =  scan.nextInt();
-																		if(answer==2) {
-																		System.out.println(answer);
-																		facturaService.calcularSubtotal(FacturaNueva);
-																		facturaService.calcularTotal(FacturaNueva);
-																		facturaService.mostrarFactura(FacturaNueva);
-																		bandFinal=true;
-																		}else {
-																			System.out.println(answer);
-																			return;
+																		if(answer==1) {
+																			bandFinal=false;
+																			it = 1;
+																			
 																		}
-																		
+																		else if(answer==2){
+																			bandFinal=true;
+																			it=1;
+																		}
 																		}catch(Exception ime) {
 																			if(ime instanceof InputMismatchException) {
 																				System.out.println("Ingrese el tipo correcto de dato\n");
+																				scan.next();
 																			}
+																			it=0;
 																		}
-																	}
+																	}while(it!=1);
 																	}else {
 																		System.out.println("\n El stock de producto no satisface la cantidad solicitada\n");
+																		scan.next();
 																		
 																	}
 																}catch(Exception e) {
 																	if(e instanceof InputMismatchException) {
 																		System.out.println("\nIngrese el tipo correcto de dato");
+																		scan.next();
 																	}
 																	System.out.println(e);
 																}
 															}
 															}else {
 																System.out.println("\nEl producto ya no tiene stock\n");
+																scan.next();
 																
+															}
+															}else {
+																 if(comprobarDetalle.isPresent()) {
+																	System.out.println("Ya esta el producto registrado en el detalle\n");
+																	scan.next();
+																}
+															}
 															}
 															}else {
 																if(comprobarStock.isEmpty()) {
 																System.out.println("No existe un producto con ese codigo\n");
-																}else if(comprobarDetalle.isPresent()) {
-																	System.out.println("Ya esta el producto registrado en el detalle\n");
-																}
+																	scan.next();
+															}
 															}
 														}catch(Exception e) {
+															band=false;
 															if(e instanceof InputMismatchException) {
 																System.out.println("\nIngrese el tipo correcto de dato");
+																scan.next();
 															}else {
 															System.out.println(e);}
 													}
-															}
-															}		
-													}
-													}else {
+															}while(!band2);
+													
+													}while(bandFinal!=true);
+
+													facturaService.agregarDetalle(detallesFactura, FacturaNueva);
+													facturaService.calcularSubtotal(FacturaNueva);
+													facturaService.calcularTotal(FacturaNueva);
+													facturaService.mostrarFactura(FacturaNueva);
+												}else {
 													System.out.println("Este codigo de factura ya fue usado\n");
 												}
-												}
+												
 											}catch(Exception e) {
 												if(e instanceof InputMismatchException) {
 													System.out.println("\nIngrese el tipo correcto de dato");
 										}
 											}
 											}
-											
-										}
 										}else {
 											System.out.println("El dni ingresado no corresponde a un cliente\n");
 										}

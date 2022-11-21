@@ -62,9 +62,12 @@ public class FacturaDaoIMP implements IFacturaDao{
 	}
 
 	@Override
-	public void agregarDetalle(Detalle detail, Factura ticket) {
+	public void agregarDetalle(List<Detalle> details, Factura ticket) {
 		// TODO Auto-generated method stub
-		ticket.getDetalles().add(detail);
+		ticket.setDetalles(details);
+		manager.getTransaction().begin();
+		manager.refresh(ticket);
+		manager.getTransaction().commit();
 		
 	}
 
