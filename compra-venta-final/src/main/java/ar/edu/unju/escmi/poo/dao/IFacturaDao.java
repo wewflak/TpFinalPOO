@@ -18,5 +18,6 @@ public interface IFacturaDao {
 	public void calcularTotal(Factura ticket);
 	public void calcularSubtotal(Factura ticket);
 	public Optional<Factura> comprobarExistenciaNroFactura(Long idTicket);
+	public Optional<Detalle> comprobarExistenciaDetalle(Long codProducto);
 	
 }

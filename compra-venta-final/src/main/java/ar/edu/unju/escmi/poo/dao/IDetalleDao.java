@@ -1,5 +1,7 @@
 package ar.edu.unju.escmi.poo.dao;
 
+import java.util.Optional;
+
 import ar.edu.unju.escmi.poo.components.Detalle;
 
 public interface IDetalleDao {

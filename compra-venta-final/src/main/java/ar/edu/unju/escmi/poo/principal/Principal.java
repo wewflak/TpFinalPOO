@@ -66,6 +66,7 @@ public class Principal {
 		Optional<Factura> comprobarFactura = Optional.empty();
 		Optional<Usuario> comprobarUsuario = Optional.empty();
 		Optional<Stock> comprobarStock = Optional.empty();
+		Optional<Detalle> comprobarDetalle = Optional.empty();
 		Usuario user = null;
 		Cliente client = null;
 		boolean band=false, tiempoActivo = false;
@@ -241,7 +242,8 @@ public class Principal {
 															Producto productoDetalle = new Producto();
 															cPro = scan.nextLong();
 															band2=true;comprobarStock = stockService.comprobarExistenciaProducto(cPro);
-															if(comprobarStock.isPresent()) {
+															comprobarDetalle = facturaService.comprobarExistenciaDetalle(cPro);
+															if(comprobarStock.isPresent() && comprobarDetalle.isEmpty()) {
 																band=true;
 															productoDetalle = productoService.buscarProductoPorCodigo(cPro);
 															
@@ -288,7 +290,11 @@ public class Principal {
 																
 															}
 															}else {
+																if(comprobarStock.isEmpty()) {
 																System.out.println("No existe un producto con ese codigo\n");
+																}else if(comprobarDetalle.isPresent()) {
+																	System.out.println("Ya esta el producto registrado en el detalle\n");
+																}
 															}
 														}catch(Exception e) {
 															if(e instanceof InputMismatchException) {

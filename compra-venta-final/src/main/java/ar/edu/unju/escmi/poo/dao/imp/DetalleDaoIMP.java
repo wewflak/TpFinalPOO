@@ -1,5 +1,8 @@
 package ar.edu.unju.escmi.poo.dao.imp;
 
+import java.util.Optional;
+
+import javax.management.Query;
 import javax.persistence.EntityManager;
 
 import ar.edu.unju.escmi.poo.components.Detalle;
@@ -35,5 +38,6 @@ public class DetalleDaoIMP implements IDetalleDao{
 		// TODO Auto-generated method stub
 		return manager.find(Detalle.class, id);
 	}
+
 
 }

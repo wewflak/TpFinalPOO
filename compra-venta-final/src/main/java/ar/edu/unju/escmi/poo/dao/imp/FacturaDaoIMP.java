@@ -141,4 +141,15 @@ public class FacturaDaoIMP implements IFacturaDao{
 		encontrado = facturas.stream().filter(f-> f.getCodFactura().equals(idTicket)).findFirst();
 		return encontrado;
 	}
+
+	@Override
+	public Optional<Detalle> comprobarExistenciaDetalle(Long codProducto) {
+		// TODO Auto-generated method stub
+		Optional<Detalle> encontrado = Optional.empty();
+		Query query = manager.createQuery("SELECT d FROM Detalle d " + " WHERE d.productoDetalle.codigoProducto = :codProducto");
+		query.setParameter("codProducto", codProducto);
+		List<Detalle> detalles = (List<Detalle>)query.getResultList();
+		encontrado = detalles.stream().filter(d-> d.getProductoDetalle().getCodigoProducto().equals(codProducto)).findFirst();
+		return encontrado;
+	}
 }
