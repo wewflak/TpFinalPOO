@@ -1,9 +1,13 @@
 package ar.edu.unju.escmi.poo.dao.imp;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+
+import org.hibernate.exception.ConstraintViolationException;
 
 import ar.edu.unju.escmi.poo.components.Detalle;
 import ar.edu.unju.escmi.poo.components.Factura;
@@ -16,14 +20,18 @@ public class FacturaDaoIMP implements IFacturaDao{
 	private static EntityManager manager =  EmfSingleton.getInstance().getEmf().createEntityManager();
 
 	@Override
-	public void agregarFactura(Factura ticket) {
+	public void agregarFactura(Factura ticket) throws Exception {
 		// TODO Auto-generated method stub
 		try {
 			manager.getTransaction().begin();
 			manager.persist(ticket);
 			manager.getTransaction().commit();
 		}catch(Exception ime) {
-			System.out.println(ime);
+		if(ime instanceof PersistenceException) {
+			throw new Exception("Ya existe una factura con ese codigo");
+		}else if(ime instanceof ConstraintViolationException) {
+			System.out.println("bbbbbbbbbbbbbbbbbbb");
+		}
 		}
 	}
 
@@ -121,5 +129,16 @@ public class FacturaDaoIMP implements IFacturaDao{
 			}
 		}
 
+	}
+
+	@Override
+	public Optional<Factura> comprobarExistenciaNroFactura(Long idTicket) {
+		// TODO Auto-generated method stub
+		Optional<Factura> encontrado = Optional.empty();
+		Query query = manager.createQuery("SELECT f FROM Factura f " + " WHERE f.codFactura = :idTicket");
+		query.setParameter("idTicket", idTicket);
+		List<Factura> facturas = query.getResultList();
+		encontrado = facturas.stream().filter(f-> f.getCodFactura().equals(idTicket)).findFirst();
+		return encontrado;
 	}
 }

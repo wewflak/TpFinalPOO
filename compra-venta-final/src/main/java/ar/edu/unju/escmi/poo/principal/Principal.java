@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import javax.persistence.NoResultException;
@@ -19,6 +20,7 @@ import ar.edu.unju.escmi.poo.components.Detalle;
 import ar.edu.unju.escmi.poo.components.Factura;
 import ar.edu.unju.escmi.poo.components.Producto;
 import ar.edu.unju.escmi.poo.components.Rol;
+import ar.edu.unju.escmi.poo.components.Stock;
 import ar.edu.unju.escmi.poo.components.Usuario;
 import ar.edu.unju.escmi.poo.dao.imp.ClienteDaoIMP;
 import ar.edu.unju.escmi.poo.dao.imp.DetalleDaoIMP;
@@ -34,11 +36,11 @@ import ar.edu.unju.escmi.poo.util.StockUtil;
 
 public class Principal {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ProductoUtil productoUtil = new ProductoUtil();
 		StockUtil stockUtil = new StockUtil();
-		productoUtil.inicializarProductos();
-		stockUtil.inicializarStock();
+		//productoUtil.inicializarProductos();
+		//stockUtil.inicializarStock();
 		//ClienteUtil.cargarCliente();
 		ProductoDaoIMP productoService = new ProductoDaoIMP();
 		ClienteDaoIMP ClienteService = new ClienteDaoIMP();
@@ -49,15 +51,21 @@ public class Principal {
 		RolDaoIMP rolService = new RolDaoIMP();
 		Rol rol = new Rol("vendedor");
 		Rol rol2 = new Rol("cliente");
-		rolService.agregarRol(rol);
-		rolService.agregarRol(rol2);
+		//rolService.agregarRol(rol);
+		//rolService.agregarRol(rol2);
 		Usuario usuario = new Usuario("aasss", "123", rolService.buscarRol(1));
 		Cliente cliente = new Cliente("ddd","aaaa", (long)5151, LocalDate.now(), usuario);
-		ClienteService.agregarCliente(cliente, usuario);
+		//usuarioService.agregarUsuario(usuario);
+		//ClienteService.agregarCliente(cliente);
+		//ClienteService.agregarUsuarioACliente(cliente, usuario);
 		Cliente clientBuscado= new Cliente();
 		//System.out.println(ClienteService.buscarCliente((long)5151).getApellido());
 		//ClienteService.obtenerClientes().stream().forEach(c-> System.out.println(c.getApellido()));
 		String fecha2;
+		Optional<Cliente> comprobarCliente = Optional.empty();
+		Optional<Factura> comprobarFactura = Optional.empty();
+		Optional<Usuario> comprobarUsuario = Optional.empty();
+		Optional<Stock> comprobarStock = Optional.empty();
 		Usuario user = null;
 		Cliente client = null;
 		boolean band=false, tiempoActivo = false;
@@ -127,33 +135,60 @@ public class Principal {
 										System.out.println("Ingrese el dni del cliente");
 										try {
 											dn = scan.nextLong();
-											band=true;
-											System.out.println("Ingrese el email del usuario del cliente");
-											em = scan.next();
-											System.out.println("Ingrese la contrasena del usuario del cliente");
-											ps = scan.next();
-											System.out.println("Ingrese la fecha de nacimiento del cliente [dd/MM/yyyy]");
-											fdn = scan.next();
-											date1 = FechaUtil.convertirFecha(fdn);
-											System.out.println("Seleccione el rol del usuario");
-											rolService.mostrarRoles().stream().forEach(r -> System.out.println(r.getIdRol() + r.getDescripcion()));
-											op=0;
-											try {
-												op =scan.nextInt();
+											comprobarCliente = ClienteService.comprobarExistenciaDNI(dn);
+											if(comprobarCliente.isEmpty()) {
+												band=true;
+												System.out.println("Ingrese la fecha de nacimiento del cliente [dd/MM/yyyy]");
+												fdn = scan.next();
+												band=false;
+												while(!band) {
+												System.out.println("Ingrese el email del usuario del cliente");
+												em = scan.next();
 												
-												Usuario usuarioNuevo = new Usuario(em, ps, rolService.buscarRol(op));
-												Cliente clienteNuevo =  new Cliente(nm, ap, dn, date1, usuarioNuevo);
-												ClienteService.agregarCliente(clienteNuevo, usuarioNuevo);
-												System.out.println(ClienteService.buscarCliente(dn).getApellido());
-											}catch(Exception ime) {
-												if(ime instanceof InputMismatchException) {
-													System.out.println("\nIngrese el tipo correcto de dato\n");
-													scan.next();
-												}else {
-												System.out.println(ime);
+												comprobarUsuario = usuarioService.comprobarExistenciaEmail(em);
+												if(comprobarUsuario.isEmpty()) {
+													band=true;
+													band=false;
+													while(!band) {
+													System.out.println("Ingrese la contrasena del usuario del cliente");
+													ps = scan.next();
+													Optional<Usuario> comprobarContrasena = Optional.empty();
+													comprobarContrasena = usuarioService.comprobarExistenciaContrasena(ps);
+													if(comprobarContrasena.isEmpty()) {
+														band=true;
+														//DateTimeFormatter formato2 = DateTimeFormatter.ofPattern("dd/MM/yyyy"); 
+														date1 = LocalDate.parse(fdn, formato);
+														System.out.println("Seleccione el rol del usuario");
+														rolService.mostrarRoles().stream().forEach(r -> System.out.println(r.getIdRol() + r.getDescripcion()));
+														op=0;
+														try {
+															op =scan.nextInt();
+															
+															Usuario usuarioNuevo = new Usuario(em, ps, rolService.buscarRol(op));
+															Cliente clienteNuevo =  new Cliente(nm, ap, dn, date1, usuarioNuevo);
+															usuarioService.agregarUsuario(usuarioNuevo);
+															ClienteService.agregarCliente(clienteNuevo);
+															ClienteService.agregarUsuarioACliente(clienteNuevo, usuarioNuevo);
+															System.out.println(ClienteService.buscarCliente(dn).getApellido());
+														}catch(Exception ime) {
+															if(ime instanceof InputMismatchException) {
+																System.out.println("\nIngrese el tipo correcto de dato\n");
+																scan.next();
+															}else {
+															System.out.println(ime);
+															}
+														}
+													}else {
+														System.out.println(" Esta contrasena ya fue cargada\n");
+													}
 												}
+												}else {
+													System.out.println("Este email ya fue cargado\n");
+												}
+												}
+											}else {
+												System.out.println("Este DNI ya fue cargado\n");
 											}
-											
 										}catch(Exception ime) {
 											if(ime instanceof InputMismatchException) {
 												System.out.println("\nIngrese el tipo correcto de dato\n");
@@ -184,86 +219,99 @@ public class Principal {
 											try {
 												while(!bandFinal) {
 												nFac = scan.nextLong();
-												Factura FacturaNueva = new Factura();
-												band1=true;
-												List<Detalle> detallesFactura = new ArrayList<Detalle>();
-												Double tot = null,subTot = null;
-												FacturaNueva.setClienteFactura(clienteFactura);
-												FacturaNueva.setCodFactura(nFac);
-												FacturaNueva.setFechaFactura(LocalDate.now());
-												FacturaNueva.setDetalles(detallesFactura);
-												FacturaNueva.setTotal(tot);
-												FacturaNueva.setSubtotal(subTot);
-												facturaService.agregarFactura(FacturaNueva);
-												do{
-													while(band2 == false) {
-													System.out.println("Ingrese el codigo de producto");
-													try {
-														Producto productoDetalle = new Producto();
-														cPro = scan.nextLong();
-														band2=true;
-														productoDetalle = productoService.buscarProductoPorCodigo(cPro);
-														if(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()).getCantidad()>0) {
-															while(!band3) {
-															System.out.println("Ingrese la cantidad a comprar del producto");
-															try {
-																cant = scan.nextInt();
-																band3=true;
-																if(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()).getCantidad()>cant) {
-																	stockService.decrementarStockProducto(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()), cant);
-																	System.out.println(stockService.buscarStockPorProducto((long)779696259).getCantidad());
-																	Double importe=(double) 0;
-																	importe = productoDetalle.getPrecioUnitario()*cant;
-																	Detalle detalleNuevo = new Detalle(productoDetalle, productoDetalle.getDescuento(), cant, importe, FacturaNueva);
-																	detalleService.crearDetalle(detalleNuevo);
-																	facturaService.agregarDetalle(detalleNuevo, FacturaNueva);
-																	System.out.println("Quiere agregar otro detalle? no=2");
-																	answer =  scan.nextInt();
-																	if(answer==2) {
-																		bandFinal=true;
+												comprobarFactura = facturaService.comprobarExistenciaNroFactura(nFac);
+												if(comprobarFactura.isEmpty()) {
+													Factura FacturaNueva = new Factura();
+													band1=true;
+													List<Detalle> detallesFactura = new ArrayList<Detalle>();
+													Double tot = null,subTot = null;
+													FacturaNueva.setClienteFactura(clienteFactura);
+													FacturaNueva.setCodFactura(nFac);
+													FacturaNueva.setFechaFactura(LocalDate.now());
+													FacturaNueva.setDetalles(detallesFactura);
+													FacturaNueva.setTotal(tot);
+													FacturaNueva.setSubtotal(subTot);
+													facturaService.agregarFactura(FacturaNueva);
+													do{
+														while(band2 == false) {
+															band=false;
+															while(!band) {
+														System.out.println("Ingrese el codigo de producto");
+														try {
+															Producto productoDetalle = new Producto();
+															cPro = scan.nextLong();
+															band2=true;comprobarStock = stockService.comprobarExistenciaProducto(cPro);
+															if(comprobarStock.isPresent()) {
+																band=true;
+															productoDetalle = productoService.buscarProductoPorCodigo(cPro);
+															
+															if(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()).getCantidad()>0) {
+																while(!band3) {
+																System.out.println("Ingrese la cantidad a comprar del producto");
+																try {
+																	cant = scan.nextInt();
+																	band3=true;
+																	if(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()).getCantidad()>cant) {
+																		stockService.decrementarStockProducto(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()), cant);
+																		System.out.println(stockService.buscarStockPorProducto((long)779696259).getCantidad());
+																		Double importe=(double) 0;
+																		importe = productoDetalle.getPrecioUnitario()*cant;
+																		Detalle detalleNuevo = new Detalle(productoDetalle, productoDetalle.getDescuento(), cant, importe, FacturaNueva);
+																		detalleService.crearDetalle(detalleNuevo);
+																		facturaService.agregarDetalle(detalleNuevo, FacturaNueva);
+																		System.out.println("Quiere agregar otro detalle? no=2");
+																		answer =  scan.nextInt();
+																		if(answer==2) {
 																		System.out.println(answer);
 																		facturaService.calcularSubtotal(FacturaNueva);
-																	facturaService.calcularTotal(FacturaNueva);
-
-																	facturaService.mostrarFactura(FacturaNueva);
-																	}else {
-																		System.out.println(answer);
-																		return;
+																		facturaService.calcularTotal(FacturaNueva);
+																		facturaService.mostrarFactura(FacturaNueva);
+																		bandFinal=true;
+																		}else {
+																			System.out.println(answer);
+																			return;
+																		}
+																		
+																		}else {
+																		System.out.println("\n El stock de producto no satisface la cantidad solicitada\n");
+																		
 																	}
-																	
-																	}else {
-																	System.out.println("\n El stock de producto no satisface la cantidad solicitada\n");
-																	answer=2;
+																}catch(Exception e) {
+																	if(e instanceof InputMismatchException) {
+																		System.out.println("\nIngrese el tipo correcto de dato");
+																	}
+																	System.out.println(e);
 																}
-															}catch(Exception e) {
-																if(e instanceof InputMismatchException) {
-																	System.out.println("\nIngrese el tipo correcto de dato");
-																}
-																System.out.println(e);
 															}
+															}else {
+																System.out.println("\nEl producto ya no tiene stock\n");
+																
+															}
+															}else {
+																System.out.println("No existe un producto con ese codigo\n");
+															}
+														}catch(Exception e) {
+															if(e instanceof InputMismatchException) {
+																System.out.println("\nIngrese el tipo correcto de dato");
+															}else if(e instanceof NonUniqueResultException) {
+																System.out.println("\n Ya existe una factura con ese codigo2\n");}
+															else if(e instanceof NullPointerException) {
+																System.out.println("No existe producto con ese codigo\n");
+															}else if(e instanceof RollbackException) {
+																System.out.println("Ya existe factura con ese codigo5\n");
+															}else if(e instanceof PersistenceException) {
+																System.out.println("aaaaaaaaa");
+															}else if(e instanceof ConstraintViolationException) {
+																System.out.println("bbbbbbbbbbbbbbbbbbb");
+															}
+															System.out.println(e);
 														}
-														}else {
-															System.out.println("\nEl producto ya no tiene stock\n");
-															answer=2;
-														}
-													}catch(Exception e) {
-														if(e instanceof InputMismatchException) {
-															System.out.println("\nIngrese el tipo correcto de dato");
-														}else if(e instanceof NonUniqueResultException) {
-															System.out.println("\n Ya existe una factura con ese codigo2\n");}
-														else if(e instanceof NullPointerException) {
-															System.out.println("No existe producto con ese codigo\n");
-														}else if(e instanceof RollbackException) {
-															System.out.println("Ya existe factura con ese codigo5\n");
-														}else if(e instanceof PersistenceException) {
-															System.out.println("aaaaaaaaa");
-														}else if(e instanceof ConstraintViolationException) {
-															System.out.println("bbbbbbbbbbbbbbbbbbb");
-														}
-														System.out.println(e);
 													}
+														}
+													}while(answer!=2);
+												}else {
+													System.out.println("Este codigo de factura ya fue usado\n");
 												}
-												}while(answer!=2);
 												}
 											}catch(Exception e) {
 												if(e instanceof InputMismatchException) {
@@ -277,7 +325,6 @@ public class Principal {
 												}else if(e instanceof ConstraintViolationException) {
 													System.out.println("bbbbbbbbbbbbbbbbbbb");
 												}
-												System.out.println(e +"aaaaaaaaaaaaaaaaa");
 											}
 										}
 										}

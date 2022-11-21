@@ -9,8 +9,10 @@ import ar.edu.unju.escmi.poo.components.Usuario;
 
 public interface IClienteDao {
 
-	public void agregarCliente(Cliente client, Usuario user);
+	public void agregarCliente(Cliente client) throws Exception;
 	public Cliente buscarCliente(Long doc);
+	public Cliente agregarUsuarioACliente(Cliente client, Usuario user) throws Exception;
     public List<Cliente> obtenerClientes();
     public Cliente buscarClientePorUsuario(String email);
+    public Optional<Cliente> comprobarExistenciaDNI(Long doc);
 }

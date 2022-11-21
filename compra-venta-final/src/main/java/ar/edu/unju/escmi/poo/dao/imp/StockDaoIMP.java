@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.poo.dao.imp;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -54,6 +55,17 @@ public class StockDaoIMP implements IStockDao{
 		manager.refresh(stock);
 		manager.getTransaction().commit();
 		
+	}
+
+	@Override
+	public Optional<Stock> comprobarExistenciaProducto(Long codProduct) {
+		// TODO Auto-generated method stub
+		Optional<Stock> encontrado = Optional.empty();
+		Query query = manager.createQuery("SELECT s FROM Stock s " + " WHERE s.producto.codigoProducto = :codProduct");
+	      query.setParameter("codProduct", codProduct);
+	      List<Stock> registro = (List<Stock>) query.getResultList();
+	      encontrado = registro.stream().filter(s-> s.getProducto().getCodigoProducto().equals(codProduct)).findFirst();
+		return encontrado;
 	}
 	
 }

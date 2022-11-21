@@ -12,7 +12,7 @@ public class FechaUtil {
 		DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy"); 
 		LocalDate date = null;
 		try {
-			LocalDate.parse(fecha,formato);
+			LocalDate.parse(fecha);
 		}catch(DateTimeParseException dtpe) {
 		throw new Exception("La fecha ingresada no tiene el formato deseado");
 			//System.out.println(dtpe);
