@@ -31,7 +31,7 @@ public class Factura implements Serializable {
 	private Long codFactura;
 	private Double subtotal;
 	private Double Total;
-	@OneToMany(mappedBy = "idDetalle", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "idDetalle", fetch=FetchType.LAZY)
 	private List<Detalle> detalles = new ArrayList<Detalle>();
 	public Factura() {
 		// TODO Auto-generated constructor stub

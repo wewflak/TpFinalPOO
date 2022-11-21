@@ -70,8 +70,6 @@ public class UsuarioDaoIMP implements IUsuarioDao {
 	public Usuario buscarUsuarioDni(Long doc) {
 		// TODO Auto-generated method stub
 		try {
-			//Query query = manager.createQuery("SELECT c FROM Cliente c" + "WHERE c.dni = :doc");
-			//return (Cliente) query.getSingleResult();
 			Query query = manager.createQuery("SELECT u FROM Usuario u " + " WHERE u.dni = :dni");
 			query.setParameter("dni", doc);
 			return (Usuario) query.getSingleResult();
@@ -90,7 +88,7 @@ public class UsuarioDaoIMP implements IUsuarioDao {
 	public Optional<Usuario> comprobarExistenciaDNI(Long doc) {
 		// TODO Auto-generated method stub
 		Optional<Usuario> encontrado = Optional.empty();
-		Query query = manager.createQuery("SELECT c FROM Cliente c " + " WHERE c.dni = :dni");
+		Query query = manager.createQuery("SELECT u FROM Usuario u " + " WHERE u.dni = :dni");
 		query.setParameter("dni", doc);
 		List<Usuario> clientes = (List<Usuario>) query.getResultList();
 		encontrado = clientes.stream().filter(c-> c.getDni().equals(doc)).findFirst();

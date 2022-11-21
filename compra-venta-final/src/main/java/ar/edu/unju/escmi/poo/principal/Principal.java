@@ -39,8 +39,8 @@ public class Principal {
 	public static void main(String[] args) throws Exception {
 		ProductoUtil productoUtil = new ProductoUtil();
 		StockUtil stockUtil = new StockUtil();
-		productoUtil.inicializarProductos();
-		stockUtil.inicializarStock();
+		//productoUtil.inicializarProductos();
+		//stockUtil.inicializarStock();
 		//ClienteUtil.cargarCliente();
 		ProductoDaoIMP productoService = new ProductoDaoIMP();
 		ClienteDaoIMP ClienteService = new ClienteDaoIMP();
@@ -51,10 +51,10 @@ public class Principal {
 		RolDaoIMP rolService = new RolDaoIMP();
 		Rol rol = new Rol("vendedor");
 		Rol rol2 = new Rol("cliente");
-		rolService.agregarRol(rol);
-		rolService.agregarRol(rol2);
+		//rolService.agregarRol(rol);
+		//rolService.agregarRol(rol2);
 		Usuario usuario = new Usuario("ddd","aaaa", (long)5151, LocalDate.now(),"aasss", "123", rolService.buscarRol(1));
-		usuarioService.agregarUsuario(usuario);
+		//usuarioService.agregarUsuario(usuario);
 		//ClienteService.agregarCliente(cliente);
 		//ClienteService.agregarUsuarioACliente(cliente, usuario);
 		//System.out.println(ClienteService.buscarCliente((long)5151).getApellido());
@@ -203,12 +203,16 @@ public class Principal {
 									Integer cant;
 									boolean band1=false,band2=false,band3=false, bandFinal=false;
 									Integer answer=0;
+									band=false;
+									while(!band) {
 									System.out.println("Ingrese el dni del cliente");
-									while(!bandFinal) {
+									
 									try {
 										dni =scan.nextLong();
+										comprobarCliente = usuarioService.comprobarExistenciaDNI(dni);
+										if(comprobarCliente.isPresent()) {
 										Usuario clienteFactura = usuarioService.buscarUsuarioDni(dni);
-										if(clienteFactura.getDni()>0 || clienteFactura.getDni()!=null) {
+										while(!bandFinal) {
 											while(!band1) {
 											System.out.println("Ingrese el numero de factura");
 											try {
@@ -227,7 +231,8 @@ public class Principal {
 													FacturaNueva.setTotal(tot);
 													FacturaNueva.setSubtotal(subTot);
 													facturaService.agregarFactura(FacturaNueva);
-													do{
+													answer=0;
+													while(answer!=2){
 														while(band2 == false) {
 															band=false;
 															while(!band) {
@@ -255,7 +260,10 @@ public class Principal {
 																		Detalle detalleNuevo = new Detalle(productoDetalle, productoDetalle.getDescuento(), cant, importe, FacturaNueva);
 																		detalleService.crearDetalle(detalleNuevo);
 																		facturaService.agregarDetalle(detalleNuevo, FacturaNueva);
+																		band=false;
+																		while(!band) {
 																		System.out.println("Quiere agregar otro detalle? no=2");
+																		try {
 																		answer =  scan.nextInt();
 																		if(answer==2) {
 																		System.out.println(answer);
@@ -268,7 +276,13 @@ public class Principal {
 																			return;
 																		}
 																		
-																		}else {
+																		}catch(Exception ime) {
+																			if(ime instanceof InputMismatchException) {
+																				System.out.println("Ingrese el tipo correcto de dato\n");
+																			}
+																		}
+																	}
+																	}else {
 																		System.out.println("\n El stock de producto no satisface la cantidad solicitada\n");
 																		
 																	}
@@ -293,42 +307,28 @@ public class Principal {
 														}catch(Exception e) {
 															if(e instanceof InputMismatchException) {
 																System.out.println("\nIngrese el tipo correcto de dato");
-															}else if(e instanceof NonUniqueResultException) {
-																System.out.println("\n Ya existe una factura con ese codigo2\n");}
-															else if(e instanceof NullPointerException) {
-																System.out.println("No existe producto con ese codigo\n");
-															}else if(e instanceof RollbackException) {
-																System.out.println("Ya existe factura con ese codigo5\n");
-															}else if(e instanceof PersistenceException) {
-																System.out.println("aaaaaaaaa");
-															}else if(e instanceof ConstraintViolationException) {
-																System.out.println("bbbbbbbbbbbbbbbbbbb");
-															}
-															System.out.println(e);
-														}
+															}else {
+															System.out.println(e);}
 													}
-														}
-													}while(answer!=2);
-												}else {
+															}
+															}		
+													}
+													}else {
 													System.out.println("Este codigo de factura ya fue usado\n");
 												}
 												}
 											}catch(Exception e) {
 												if(e instanceof InputMismatchException) {
 													System.out.println("\nIngrese el tipo correcto de dato");
-												}else if(e instanceof NonUniqueResultException) {
-													System.out.println("\n Ya existe una factura con ese codigo3\n");
-												}else if(e instanceof RollbackException) {
-													System.out.println("Ya existe factura con ese codigo4\n");
-												}else if(e instanceof PersistenceException) {
-													System.out.println("aaaaaaaaa");
-												}else if(e instanceof ConstraintViolationException) {
-													System.out.println("bbbbbbbbbbbbbbbbbbb");
-												}
+										}
 											}
+											}
+											
 										}
+										}else {
+											System.out.println("El dni ingresado no corresponde a un cliente\n");
 										}
-									}catch(Exception e) {
+										}catch(Exception e) {
 										if(e instanceof InputMismatchException) {
 											System.out.println("\nIngrese el tipo correcto de dato");
 										}else if(e instanceof NullPointerException) {
@@ -338,8 +338,9 @@ public class Principal {
 											bandFinal=true;
 										}
 										System.out.println(e);
+										}
 									}
-									}
+									
 									break;
 								case 3:
 									usuarioService.obtenerUsuarios().stream().forEach(u-> System.out.println(u.toString()));
