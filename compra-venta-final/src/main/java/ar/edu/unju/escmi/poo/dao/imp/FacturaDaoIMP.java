@@ -131,25 +131,23 @@ public class FacturaDaoIMP implements IFacturaDao{
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<Factura> comprobarExistenciaNroFactura(Long idTicket) {
 		// TODO Auto-generated method stub
 		Optional<Factura> encontrado = Optional.empty();
 		Query query = manager.createQuery("SELECT f FROM Factura f " + " WHERE f.codFactura = :idTicket");
 		query.setParameter("idTicket", idTicket);
-		List<Factura> facturas = query.getResultList();
+		List<Factura> facturas = (List<Factura>) query.getResultList();
 		encontrado = facturas.stream().filter(f-> f.getCodFactura().equals(idTicket)).findFirst();
 		return encontrado;
 	}
 
 	@Override
-	public Optional<Detalle> comprobarExistenciaDetalle(Long codProducto) {
+	public Optional<Detalle> comprobarExistenciaDetalle(Long codProducto, Factura ticket) {
 		// TODO Auto-generated method stub
 		Optional<Detalle> encontrado = Optional.empty();
-		Query query = manager.createQuery("SELECT d FROM Detalle d " + " WHERE d.productoDetalle.codigoProducto = :codProducto");
-		query.setParameter("codProducto", codProducto);
-		List<Detalle> detalles = (List<Detalle>)query.getResultList();
-		encontrado = detalles.stream().filter(d-> d.getProductoDetalle().getCodigoProducto().equals(codProducto)).findFirst();
+		encontrado = ticket.getDetalles().stream().filter(d-> d.getProductoDetalle().getCodigoProducto().equals(codProducto)).findFirst();
 		return encontrado;
 	}
 }

@@ -22,7 +22,7 @@ public class Factura implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="idCliente")
-	private Cliente clienteFactura;
+	private Usuario clienteFactura;
 	private LocalDate fechaFactura;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY )
@@ -36,10 +36,10 @@ public class Factura implements Serializable {
 	public Factura() {
 		// TODO Auto-generated constructor stub
 	}
-	public Cliente getClienteFactura() {
+	public Usuario getClienteFactura() {
 		return clienteFactura;
 	}
-	public void setClienteFactura(Cliente clienteFactura) {
+	public void setClienteFactura(Usuario clienteFactura) {
 		this.clienteFactura = clienteFactura;
 	}
 	public LocalDate getFechaFactura() {
@@ -72,7 +72,7 @@ public class Factura implements Serializable {
 	public void setDetalles(List<Detalle> detalles) {
 		this.detalles = detalles;
 	}
-	public Factura(Cliente clienteFactura, LocalDate fechaFactura, Long codFactura, Double subtotal, Double total,
+	public Factura(Usuario clienteFactura, LocalDate fechaFactura, Long codFactura, Double subtotal, Double total,
 			List<Detalle> detalles) {
 		super();
 		this.clienteFactura = clienteFactura;

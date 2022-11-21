@@ -39,8 +39,8 @@ public class Principal {
 	public static void main(String[] args) throws Exception {
 		ProductoUtil productoUtil = new ProductoUtil();
 		StockUtil stockUtil = new StockUtil();
-		//productoUtil.inicializarProductos();
-		//stockUtil.inicializarStock();
+		productoUtil.inicializarProductos();
+		stockUtil.inicializarStock();
 		//ClienteUtil.cargarCliente();
 		ProductoDaoIMP productoService = new ProductoDaoIMP();
 		ClienteDaoIMP ClienteService = new ClienteDaoIMP();
@@ -51,18 +51,16 @@ public class Principal {
 		RolDaoIMP rolService = new RolDaoIMP();
 		Rol rol = new Rol("vendedor");
 		Rol rol2 = new Rol("cliente");
-		//rolService.agregarRol(rol);
-		//rolService.agregarRol(rol2);
-		Usuario usuario = new Usuario("aasss", "123", rolService.buscarRol(1));
-		Cliente cliente = new Cliente("ddd","aaaa", (long)5151, LocalDate.now(), usuario);
-		//usuarioService.agregarUsuario(usuario);
+		rolService.agregarRol(rol);
+		rolService.agregarRol(rol2);
+		Usuario usuario = new Usuario("ddd","aaaa", (long)5151, LocalDate.now(),"aasss", "123", rolService.buscarRol(1));
+		usuarioService.agregarUsuario(usuario);
 		//ClienteService.agregarCliente(cliente);
 		//ClienteService.agregarUsuarioACliente(cliente, usuario);
-		Cliente clientBuscado= new Cliente();
 		//System.out.println(ClienteService.buscarCliente((long)5151).getApellido());
 		//ClienteService.obtenerClientes().stream().forEach(c-> System.out.println(c.getApellido()));
 		String fecha2;
-		Optional<Cliente> comprobarCliente = Optional.empty();
+		Optional<Usuario> comprobarCliente = Optional.empty();
 		Optional<Factura> comprobarFactura = Optional.empty();
 		Optional<Usuario> comprobarUsuario = Optional.empty();
 		Optional<Stock> comprobarStock = Optional.empty();
@@ -104,8 +102,7 @@ public class Principal {
 						try {
 						band=true;
 						user = usuarioService.buscarUsuario(correo, contrasena);
-						client = ClienteService.buscarClientePorUsuario(user.getEmail());
-						System.out.println(client.getDni());
+						System.out.println(user.getDni());
 						System.out.println(user.getEmail());
 						if(user.getRol().getDescripcion().equals("vendedor")) {
 							do {
@@ -136,7 +133,7 @@ public class Principal {
 										System.out.println("Ingrese el dni del cliente");
 										try {
 											dn = scan.nextLong();
-											comprobarCliente = ClienteService.comprobarExistenciaDNI(dn);
+											comprobarCliente = usuarioService.comprobarExistenciaDNI(dn);
 											if(comprobarCliente.isEmpty()) {
 												band=true;
 												System.out.println("Ingrese la fecha de nacimiento del cliente [dd/MM/yyyy]");
@@ -165,12 +162,9 @@ public class Principal {
 														try {
 															op =scan.nextInt();
 															
-															Usuario usuarioNuevo = new Usuario(em, ps, rolService.buscarRol(op));
-															Cliente clienteNuevo =  new Cliente(nm, ap, dn, date1, usuarioNuevo);
+															Usuario usuarioNuevo = new Usuario(nm, ap, dn, date1,em, ps, rolService.buscarRol(op));
 															usuarioService.agregarUsuario(usuarioNuevo);
-															ClienteService.agregarCliente(clienteNuevo);
-															ClienteService.agregarUsuarioACliente(clienteNuevo, usuarioNuevo);
-															System.out.println(ClienteService.buscarCliente(dn).getApellido());
+															System.out.println(usuarioService);
 														}catch(Exception ime) {
 															if(ime instanceof InputMismatchException) {
 																System.out.println("\nIngrese el tipo correcto de dato\n");
@@ -213,7 +207,7 @@ public class Principal {
 									while(!bandFinal) {
 									try {
 										dni =scan.nextLong();
-										Cliente clienteFactura = ClienteService.buscarCliente(dni);
+										Usuario clienteFactura = usuarioService.buscarUsuarioDni(dni);
 										if(clienteFactura.getDni()>0 || clienteFactura.getDni()!=null) {
 											while(!band1) {
 											System.out.println("Ingrese el numero de factura");
@@ -242,7 +236,7 @@ public class Principal {
 															Producto productoDetalle = new Producto();
 															cPro = scan.nextLong();
 															band2=true;comprobarStock = stockService.comprobarExistenciaProducto(cPro);
-															comprobarDetalle = facturaService.comprobarExistenciaDetalle(cPro);
+															comprobarDetalle = facturaService.comprobarExistenciaDetalle(cPro, FacturaNueva);
 															if(comprobarStock.isPresent() && comprobarDetalle.isEmpty()) {
 																band=true;
 															productoDetalle = productoService.buscarProductoPorCodigo(cPro);
@@ -338,7 +332,7 @@ public class Principal {
 										if(e instanceof InputMismatchException) {
 											System.out.println("\nIngrese el tipo correcto de dato");
 										}else if(e instanceof NullPointerException) {
-											System.out.println("No existe un cliente con esde dni\n");
+											System.out.println("No existe un cliente con ese dni\n");
 										}else if(e instanceof RollbackException) {
 											System.out.println("Ya existe factura con ese codigo8\n");
 											bandFinal=true;
@@ -348,31 +342,51 @@ public class Principal {
 									}
 									break;
 								case 3:
-									ClienteService.obtenerClientes().stream().forEach(c-> System.out.println(c.toString()));
+									usuarioService.obtenerUsuarios().stream().forEach(u-> System.out.println(u.toString()));
 									break;
 								case 4:
 									dni=(long)0;
+									band=false;
+									while(!band) {
 									System.out.println("Ingrese el numero de dni del cliente");
 									try {
 										dni = scan.nextLong();
-										ClienteService.buscarCliente(dni);
+										band=true;
+										comprobarCliente = Optional.empty();
+										comprobarCliente = usuarioService.comprobarExistenciaDNI(dni);
+										if(comprobarCliente.isPresent()) {
 										facturaService.retornarFacturaPorCliente(dni).stream().forEach(f-> facturaService.mostrarFactura(f));
-									}catch(Exception e){
+										}else {
+											System.out.println("  No existe cliente con ese dni\n");
+										}
+										}catch(Exception e){
 										System.out.println(e);
 									}
+									}
+									
 									break;
 								case 5:
 									Long codeTicket=(long)0;
+									band=false;
+											while(!band) {
 									System.out.println("Ingrese el codigo de factura");
 									try {
 										codeTicket = scan.nextLong();
+										band=true;
+										comprobarFactura = Optional.empty();
+										comprobarFactura = facturaService.comprobarExistenciaNroFactura(codeTicket);
+										if(comprobarFactura.isPresent()) {
 										facturaService.mostrarFactura(facturaService.buscarFacturaPorId(codeTicket));
+										}else {
+											System.out.println("  No existe factura con ese codigo\n");
+										}
 									}catch(Exception e) {
 										System.out.println(e);
 										if(e instanceof NullPointerException) {
 											System.out.println("\nLa factura no existe");
 										}
 									}
+											}
 									break;
 								case 6:
 									System.out.println("Sesion cerrada...");
@@ -402,10 +416,19 @@ public class Principal {
 									
 										case 1:
 											Long codeTicket=(long)0;
+											band=false;
+											while(!band) {
 											System.out.println("Ingrese el codigo de factura");
 											try {
 												codeTicket = scan.nextLong();
+												band=true;
+												comprobarFactura = Optional.empty();
+												comprobarFactura = facturaService.comprobarExistenciaNroFactura(codeTicket);
+												if(comprobarFactura.isPresent()) {
 												facturaService.mostrarFactura(facturaService.mostrarFacturasPorCliente(client.getDni(), codeTicket));
+												}else {
+													System.out.println("  No existe factura con ese codigo\n");
+												}
 											}catch(Exception e) {
 												System.out.println(e);
 												if(e instanceof NullPointerException) {
@@ -414,9 +437,10 @@ public class Principal {
 													System.out.println("\n El cliente no tiene registrada una factura con ese codigo");
 												}
 											}
+											}
 											break;
 										case 2:
-											facturaService.retornarFacturaPorCliente(client.getDni()).stream().forEach(f-> facturaService.mostrarFactura(f));
+											facturaService.retornarFacturaPorCliente(user.getDni()).stream().forEach(f-> facturaService.mostrarFactura(f));
 											break;
 										case 3:
 											break;

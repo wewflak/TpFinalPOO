@@ -34,16 +34,13 @@ public class ClienteTest extends TestCase{
 	@Test
 	public void testComprobarCodigo() throws Exception {
 		Rol unRol = new Rol("dddd");
-		Usuario unUsuario = new Usuario("aaa", "ffff", unRol);
-		Cliente unCliente = new Cliente("bbbb", "cccc", (long)5363, LocalDate.now(), unUsuario);
+		Usuario unUsuario = new Usuario("bbbb", "cccc", (long)5363, LocalDate.now(),"aaa", "ffff", unRol);
 		rolService.agregarRol(unRol);
 		usuarioService.agregarUsuario(unUsuario);
-		clienteService.agregarCliente(unCliente);
-		clienteService.agregarUsuarioACliente(unCliente, unUsuario);
-		assertNotNull(unCliente);
+		assertNotNull(unUsuario);
 	}
 	@Test
 	public void testCliente() {
-		assertNotNull(clienteService.buscarCliente((long) 7741).getFechaDeN());
+		assertNotNull(usuarioService.buscarUsuarioDni((long)5151).getFechaDeN());
 	}
 }
