@@ -448,7 +448,7 @@ public class Principal {
 												comprobarFactura = Optional.empty();
 												comprobarFactura = facturaService.comprobarExistenciaNroFactura(codeTicket);
 												if(comprobarFactura.isPresent()) {
-												facturaService.mostrarFactura(facturaService.mostrarFacturasPorCliente(client.getDni(), codeTicket));
+												facturaService.mostrarFactura(facturaService.mostrarFacturasPorCliente(user.getDni(), codeTicket));
 												}else {
 													System.out.println("  No existe factura con ese codigo\n");
 												}

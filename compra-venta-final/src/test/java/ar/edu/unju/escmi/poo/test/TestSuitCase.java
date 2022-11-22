@@ -4,10 +4,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import ar.edu.unju.escmi.poo.dao.imp.ClienteTest;
+//import ar.edu.unju.escmi.poo.dao.imp.ClienteTest;
 
 @	RunWith(Suite.class)
-	@SuiteClasses({ClienteTest.class})
+//	@SuiteClasses({ClienteTest.class})
 public class TestSuitCase {
 	
 }
