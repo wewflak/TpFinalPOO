@@ -231,7 +231,7 @@ public class Principal {
 															do {
 															band=false;
 															do{
-																System.out.println(band2);
+																//System.out.println(band2);
 														System.out.println("Ingrese el codigo de producto");
 														try {
 															cPro = scan.nextLong();
@@ -242,18 +242,18 @@ public class Principal {
 															comprobarStock = stockService.comprobarExistenciaProducto(cPro);
 															if(comprobarStock.isPresent()) {
 															boolean bandDetalle=false;
-															System.out.println("presente");
+															//System.out.println("presente");
 															while(!bandDetalle) {
 															comprobarDetalle = facturaService.comprobarExistenciaDetalle(cPro, FacturaNueva);
-															System.out.println("llego");
+															//System.out.println("llego");
 															if(comprobarStock.isPresent() && comprobarDetalle.isEmpty()) {
 																bandDetalle=true;
 															productoDetalle = productoService.buscarProductoPorCodigo(cPro);
-															System.out.println("estoy");
+															//System.out.println("estoy");
 															if(stockService.buscarStockPorProducto(productoDetalle.getCodigoProducto()).getCantidad()>0) {
 																band2=true;
-																System.out.println("aaaa" +band3);
-																band2=true;
+																//System.out.println("aaaa" +band3);
+																//band2=true;
 																band3=false;
 																while(!band3) {
 																System.out.println("Ingrese la cantidad a comprar del producto");
