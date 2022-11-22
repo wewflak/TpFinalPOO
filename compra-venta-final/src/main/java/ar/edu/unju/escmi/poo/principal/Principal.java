@@ -29,7 +29,6 @@ import ar.edu.unju.escmi.poo.dao.imp.ProductoDaoIMP;
 import ar.edu.unju.escmi.poo.dao.imp.RolDaoIMP;
 import ar.edu.unju.escmi.poo.dao.imp.StockDaoIMP;
 import ar.edu.unju.escmi.poo.dao.imp.UsuarioDaoIMP;
-import ar.edu.unju.escmi.poo.util.ClienteUtil;
 import ar.edu.unju.escmi.poo.util.FechaUtil;
 import ar.edu.unju.escmi.poo.util.ProductoUtil;
 import ar.edu.unju.escmi.poo.util.StockUtil;
@@ -41,7 +40,6 @@ public class Principal {
 		StockUtil stockUtil = new StockUtil();
 		//productoUtil.inicializarProductos();
 		//stockUtil.inicializarStock();
-		//ClienteUtil.cargarCliente();
 		ProductoDaoIMP productoService = new ProductoDaoIMP();
 		ClienteDaoIMP ClienteService = new ClienteDaoIMP();
 		UsuarioDaoIMP usuarioService = new UsuarioDaoIMP();
